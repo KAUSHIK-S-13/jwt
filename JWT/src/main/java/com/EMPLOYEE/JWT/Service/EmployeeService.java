@@ -5,6 +5,7 @@ import com.EMPLOYEE.JWT.DTO.EmployeeDTO;
 import com.EMPLOYEE.JWT.DTO.TokenDto;
 import com.EMPLOYEE.JWT.Model.Employee;
 import com.EMPLOYEE.JWT.Repository.EmployeeRepository;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class EmployeeService {
         BaseResponse baseResponse=new BaseResponse();
         dto.setEmpName(employeeDTO.getEmpName());
         dto.setEmail(employeeDTO.getEmail());
-        dto.setPassword(employeeDTO.getPassword());
+        dto.setPassword(generateToken(employeeDTO.getPassword()));
         employeeRepository.save(dto);
         baseResponse.setData(dto);
         baseResponse.setStatusCode("200");
@@ -37,7 +38,7 @@ public class EmployeeService {
         Optional<Employee> empl = employeeRepository.findByEmail(tokenDto.getEmail());
         try {
             if (empl.isPresent()) {
-                String jwtt = generateToken(empl.get().getEmail(),"üser",empl.get().getPassword());
+                String jwtt = generateToken(empl.get().getPassword());
                 tokenDto.setToken(jwtt);
             }
         } catch (Exception e) {
@@ -49,4 +50,6 @@ public class EmployeeService {
         baseResponse.setData(tokenDto);
         return  baseResponse;
     }
+
+
 }
